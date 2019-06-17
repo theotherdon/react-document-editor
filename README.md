@@ -1,3 +1,11 @@
+# React Document Editor
+
+## Run the App
+
+1. git clone git@github.com:donald-s/react-document-editor.git && cd react-document-editor
+2. yarn
+3. yarn start
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
