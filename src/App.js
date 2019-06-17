@@ -15,21 +15,21 @@ function App() {
     buildSampleDocument()
   ])
   const [selectedListItem, setSelectedListItem] = useState({})
-
-  const renderListItem = listItem => (
-    <ListItem
-      selected={listItem.id === selectedListItem.id}
-      button
-      onClick={() => setSelectedListItem(listItem)}
-    >
-      <ListItemText>{listItem.title}</ListItemText>
-    </ListItem>
-  )
+  const [search, setSearch] = useState("")
 
   const getSelectedListItem = () =>
     _.isEmpty(selectedListItem)
       ? {}
       : _.find(listItems, { id: selectedListItem.id })
+
+  const getListItems = () =>
+    _.isEmpty(search)
+      ? listItems
+      : _.filter(
+          listItems,
+          listItem =>
+            listItem.title.includes(search) || listItem.content.includes(search)
+        )
 
   const handleListItemChange = key => event => {
     const updatedSelectedListItem = {
@@ -42,11 +42,28 @@ function App() {
     setListItems(updatedSelectedListItems)
   }
 
+  const renderListItem = listItem => (
+    <ListItem
+      key={listItem.id}
+      selected={listItem.id === selectedListItem.id}
+      button
+      onClick={() => setSelectedListItem(listItem)}
+    >
+      <ListItemText>{listItem.title}</ListItemText>
+    </ListItem>
+  )
+
   return (
     <div className="App">
       <Grid container spacing={4}>
         <Grid item xs={3}>
-          <List>{_.map(listItems, renderListItem)}</List>
+          <TextField
+            label="Search"
+            value={search}
+            fullWidth={true}
+            onChange={event => setSearch(event.target.value)}
+          />
+          <List>{_.map(getListItems(), renderListItem)}</List>
         </Grid>
         <Grid item xs={8}>
           <TextField
