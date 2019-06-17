@@ -14,16 +14,20 @@ function App() {
     buildSampleDocument(),
     buildSampleDocument()
   ])
-  const [selectedListItem, setSelectedListItem] = useState(null)
+  const [selectedListItem, setSelectedListItem] = useState({})
 
   const renderListItem = listItem => (
-    <ListItem button onClick={() => setSelectedListItem(listItem)}>
+    <ListItem
+      selected={listItem.id === selectedListItem.id}
+      button
+      onClick={() => setSelectedListItem(listItem)}
+    >
       <ListItemText>{listItem.title}</ListItemText>
     </ListItem>
   )
 
   const getSelectedListItem = () =>
-    _.isNil(selectedListItem)
+    _.isEmpty(selectedListItem)
       ? {}
       : _.find(listItems, { id: selectedListItem.id })
 
