@@ -9,17 +9,22 @@ import TextField from "@material-ui/core/TextField"
 
 import "./App.css"
 
+const ENTER_KEY_CODE = 13
+
 function App() {
   const [listItems, setListItems] = useState([
     buildSampleDocument(),
     buildSampleDocument()
   ])
-  const [selectedListItem, setSelectedListItem] = useState({})
+  const [selectedListItem, setSelectedListItem] = useState({
+    content: "",
+    title: ""
+  })
   const [search, setSearch] = useState("")
 
   const getSelectedListItem = () =>
-    _.isEmpty(selectedListItem)
-      ? {}
+    _.isEmpty(selectedListItem.title) && _.isEmpty(selectedListItem.content)
+      ? selectedListItem
       : _.find(listItems, { id: selectedListItem.id })
 
   const getListItems = () =>
@@ -31,6 +36,8 @@ function App() {
             listItem.title.includes(search) || listItem.content.includes(search)
         )
 
+  const doesSearchMatchAnyDocuments = () => getListItems().length > 0
+
   const handleListItemChange = key => event => {
     const updatedSelectedListItem = {
       ...selectedListItem,
@@ -40,6 +47,16 @@ function App() {
       listItem.id === selectedListItem.id ? updatedSelectedListItem : listItem
     )
     setListItems(updatedSelectedListItems)
+  }
+
+  const handleKeyDown = event => {
+    if (event.keyCode !== ENTER_KEY_CODE || doesSearchMatchAnyDocuments())
+      return
+
+    const newListItem = { id: _.uniqueId(), title: search, content: "" }
+    setListItems([...listItems, newListItem])
+    setSelectedListItem(newListItem)
+    setSearch("")
   }
 
   const renderListItem = listItem => (
@@ -62,6 +79,7 @@ function App() {
             value={search}
             fullWidth={true}
             onChange={event => setSearch(event.target.value)}
+            onKeyDown={handleKeyDown}
           />
           <List>{_.map(getListItems(), renderListItem)}</List>
         </Grid>
